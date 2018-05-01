@@ -20,7 +20,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -59,16 +58,21 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django_settings_export.settings_export',
                 'app.context.insert_settings',
             ],
         },
     },
 ]
 
+SETTINGS_EXPORT = [
+    'GA_ID',
+    'DEBUG',
+]
+
 WSGI_APPLICATION = 'app.wsgi.application'
 
 SITE_ID = 1
-
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
@@ -85,7 +89,6 @@ DATABASES = {
         # 'PORT': '',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
@@ -105,20 +108,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
@@ -130,21 +127,21 @@ STATIC_URL = '/static/'
 # files to include:
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'assets'),
-    os.path.join(BASE_DIR, '../node_modules/bootstrap/dist'),
-    os.path.join(BASE_DIR, '../node_modules/jquery/dist'),
-    os.path.join(BASE_DIR, '../node_modules/jsplumb/dist'),
-    os.path.join(BASE_DIR, '../node_modules/font-proxima-nova')
+    os.path.join(BASE_DIR, '..', 'node_modules', 'bootstrap', 'dist'),
+    os.path.join(BASE_DIR, '..', 'node_modules', 'jquery', 'dist'),
+    os.path.join(BASE_DIR, '..', 'node_modules', 'jsplumb', 'dist'),
+    os.path.join(BASE_DIR, '..', 'node_modules', 'font-proxima-nova')
 )
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 # Github
-GITHUB_API_BASE_URL  = 'https://api.github.com'
+GITHUB_API_BASE_URL = 'https://api.github.com'
 GITHUB_AUTH_BASE_URL = 'https://github.com/login/oauth/authorize'
-GITHUB_TOKEN_URL     = 'https://github.com/login/oauth/access_token'
-GITHUB_SCOPE         = 'read:user,user:email,read:org'
+GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token'
+GITHUB_SCOPE = 'read:user,user:email,read:org'
 
 # Configure Django App for Heroku.
 import django_heroku
-django_heroku.settings(locals())
+django_heroku.settings(locals(), test_runner=False)
