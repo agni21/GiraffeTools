@@ -4,9 +4,10 @@ import TouchBackend from 'react-dnd-touch-backend'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { default as ItemPreview } from './itemPreview';
 import Sidebar from './sidebar';
-import Canvas from './canvas'
+import Canvas from './canvas';
 import nodes from '../static/assets/nipype.json';
-// import zoomFunctions from './zoomFunctions';
+import ParameterPane from './parameterPane';
+import zoomFunctions from './zoomFunctions';
 import $ from 'jquery';
 
 require('browsernizr/test/touchevents');
@@ -28,6 +29,9 @@ class Content extends React.Component {
     this.changeSelectedNode = this.changeSelectedNode.bind(this);
     this.toggleSidebar      = this.toggleSidebar.bind(this);
     this.loadFromJson       = this.loadFromJson.bind(this);
+    this.modifyNodeParams   = this.modifyNodeParams.bind(this);
+    this.deleteNode         = this.deleteNode.bind(this);
+
   }; //end constructor
 
   componentWillMount() {
@@ -64,6 +68,7 @@ class Content extends React.Component {
   toggleSidebar() {
     $('#sidebar').toggleClass('visible');
     $('.sidebar-button').toggleClass('close');
+    $('.header').toggleClass('navbar-open');
     $('#main').toggleClass('withSidebar');
   }
 
@@ -90,19 +95,34 @@ class Content extends React.Component {
       newNode.colour = currentNodes.colour;
       newNode.info = { category, name };
       newNode.state = {
-        //This translation definitely needs to be fixed
-        x: (node['position'][0] - canvas.x)/zoom - 45 + 1000,
-        y: (node['position'][1] - canvas.y)/zoom - 25 + 400,
+        x: node['position'][0],
+        y: node['position'][1],
         class: ''
       };
       newNode.links = { input: [], output: [] };
 
       this.addNewNode(newNode);
     });
+    zoomFunctions().onLoaded();
 
     // load links
     json['links'].forEach(link => {
 
+    });
+  }
+
+  modifyNodeParams(node, nodeId = this.state.selectedNode) {
+    const net = this.state.net;
+    net[nodeId] = node;
+    this.setState({ net });
+  }
+
+  deleteNode(nodeId) {
+    const net = this.state.net;
+    delete net[nodeId];
+    this.setState({
+      net: net,
+      selectedNode: null
     });
   }
 
@@ -119,7 +139,13 @@ class Content extends React.Component {
             addNewNode          = {this.addNewNode}
             changeSelectedNode  = {this.changeSelectedNode}
           />
-          {/* SetParams */}
+          <ParameterPane
+            net                 = {this.state.net}
+            selectedNode        = {this.state.selectedNode}
+            deleteNode          = {this.deleteNode}
+            modifyNode          = {this.modifyNodeParams}
+            changeSelectedNode  = {this.changeSelectedNode}
+          />
           {/* Tooltip */}
           {/* Modal */}
         </div>

@@ -415,6 +415,7 @@ body {
   background: #e15e4f;
   color: white;
   cursor: pointer;
+  user-select: none;
 }
 
 .node.preview{
@@ -826,5 +827,37 @@ input[type="file"] {
     border-bottom: 0px solid #333;
     background: white;
     transform: rotate(-45deg)
+  }
+}
+
+/* Custom styles */
+.header {
+  width: auto;
+  display: flex;
+  flex-flow: column;
+  top: 0;
+  left: 15rem;
+  position: absolute;
+}
+
+.base {
+  margin-top: 5rem;
+}
+.canvas {
+  margin-top: 5rem;
+  border-radius: 0;
+}
+
+.navbar-open {
+  left: 15rem;
+  transition: transform 0.1s ease-in-out;
+}
+
+@media(max-width: 1200px) {
+  .navbar-open {
+        left: 13.4rem !important;
+      }
+  .header {
+    left: 4rem;
   }
 }
