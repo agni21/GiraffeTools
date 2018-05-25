@@ -6,18 +6,16 @@ services:
   - docker
 env:
   - PYTHONPATH="$TRAVIS_BUILD_DIR/app/"
+  - MODE=production
 before_install:
   - docker pull timvanmourik/giraffe-tools
+  - mv .env.sample .env
+  - source ./bin/init-environment.bash
 install:
-  - npm install
   - pip install -r requirements/test.txt
+  - npm install
 before_script:
-  - cd app;
-  - python manage.py collectstatic --noinput -i other
-  - python manage.py migrate
+  - bash ./bin/init-node.bash
+  - bash ./bin/init-django.bash
 script:
-  - python manage.py test
-  - cd ..; npm test
-after_success:
-  - pip install codecov
-  - codecov
+  - bash ./bin/run-tests.bash
