@@ -13,14 +13,12 @@ INSTALLED_APPS = [
     'porcupine.apps.PorcupineConfig',
     'fabrik.apps.FabrikConfig',
     'github.apps.GithubConfig',
-    'livereload',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'webpack_loader',
 ]
 
 MIDDLEWARE = [
@@ -31,7 +29,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'livereload.middleware.LiveReloadScript',
 ]
 
 ROOT_URLCONF = 'app.urls'
@@ -118,7 +115,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, '..', 'node_modules', 'bootstrap', 'dist'),
     os.path.join(BASE_DIR, '..', 'node_modules', 'jquery', 'dist'),
     os.path.join(BASE_DIR, '..', 'node_modules', 'jsplumb', 'dist'),
-    os.path.join(BASE_DIR, '..', 'node_modules', 'font-proxima-nova'),
+    os.path.join(BASE_DIR, '..', 'node_modules', 'font-proxima-nova')
 )
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

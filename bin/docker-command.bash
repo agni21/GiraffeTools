@@ -1,19 +1,27 @@
 #!/bin/bash
 
-# Hello there!
-# If you want to use your own environment settings, please copy:
-#   .env.sample --> .env
-source ./bin/init-environment.bash
-
-# initialise node and django
-bash ./bin/init-node.bash
-bash ./bin/init-django.bash
-
-# watch changes and live reload them on changes:
-if [ "$MODE" = "watch" ]; then
-  bash ./bin/init-watch.bash
+#load environment variables
+if [ -f .env ]; then
+    export $(cat .env | grep -v ^# | xargs)
 fi
 
-# run server
+# node commands
+npm install
+node ./bin/pivotNodesByCategory.js;
+if   [ NODE_ENV == development ]; then
+  npm run dev
+elif [ NODE_ENV == production  ]; then
+  npm run build
+else
+  npm run dev
+fi
+
+if [ UPDATE_REACT ]; then
+  ./node_modules/.bin/webpack --config webpack.config.js --watch &
+fi
+
+# django commands
 cd app
+python manage.py collectstatic --noinput -i other
+python manage.py migrate
 python manage.py runserver 0.0.0.0:8000

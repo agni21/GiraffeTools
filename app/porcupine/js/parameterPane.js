@@ -9,7 +9,6 @@ class ParameterPane extends React.Component {
     this.close = this.close.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
   }
-
   changeParams(portName, key, value) {
     const net = this.props.net;
     let node = { ...net[this.props.selectedNode] };
@@ -21,32 +20,20 @@ class ParameterPane extends React.Component {
     port[key] = value;
     this.props.modifyNode(node);
   }
-
-  removePort(portName) {
-    const { net, modifyNode } = this.props;
-    let node = { ...net[this.props.selectedNode] };
-    node.ports = node.ports.filter(port => port.name !== portName);
-    modifyNode(node);
-  }
-
   close() {
     this.props.changeSelectedNode(null);
   }
-
   handleKeyPress(event) {
     if (event.key == 'Delete') {
       this.props.deleteNode(this.props.selectedNode);
     }
   }
-
   componentDidMount() {
     document.addEventListener("keydown", this.handleKeyPress, false);
   }
-
   componentWillUnmount() {
     document.removeEventListener("keydown", this.handleKeyPress, false);
   }
-
   render() {
     if (this.props.selectedNode) {
       const params = [];
@@ -55,10 +42,6 @@ class ParameterPane extends React.Component {
 
       Object.keys(node.ports).forEach(i => {
         const port = node.ports[i];
-        const visibleIconClassName = port.visible ? 'fa-eye' : 'fa-eye-slash';
-        const visibilityText = port.visible ? 'Invisible' : 'Visible';
-        {/*const iteratorClassName = port.iterator ? 'retweet' : 'retweet';*/}
-        {/*const iteratorText = port.iterator ? 'Iterate over this variable' : 'Do not iterate over the variable';*/}
         params.push(
           [
           <Field
@@ -69,19 +52,14 @@ class ParameterPane extends React.Component {
             disabled={!port.editable}
             changeField={(value) => this.changeParams(port.name, 'value', value)}
           />,
-          <div
-            key={`${port.name}_actions`}
-            className="sidebar__node-actions">
-            <div className="sidebar__node-visibility" onClick={() => this.changeParams(port.name, 'visible', !port.visible)} >
-              <i className={`fas ${visibleIconClassName}`} title={`Make ${visibilityText}`} />{' '}
-            </div>
-            <button
-              type="button"
-              className="btn btn-outline-danger btn-sm"
-              onClick={() => this.removePort(port.name)}>
-              <i className="fas fa-trash-alt" />
-            </button>
-          </div>
+          <Field
+            id={`${port.name}_checkbox`}
+            key={`${i.name}_checkbox`}
+            data={{ type: 'checkbox', label: 'Visible' }}
+            value={port.visible}
+            disabled={false}
+            changeField={(value) => this.changeParams(port.name, 'visible', value)}
+            />
           ]
         );
       });
@@ -89,18 +67,9 @@ class ParameterPane extends React.Component {
       return (
         <div className="setparams setparamsActive" >
           <div className="setHead">
-            <h4 className="sidebar__node-name">
-              {node.title.name}
-            </h4>
-            <div className="sidebar__node-documentation">
-              <a href={node.title.web_url} target="_blank">
-                <i className="fas fa-globe sidebar__globe-icon"></i>
-                  <span>View documentation</span>{' '}
-              </a>
-            </div>
-            <i className="fas fa-times sidebar__close-icon"
-              onClick={() => this.close()}
-              aria-hidden="true"/>
+            <h5 className="sidebar-heading">NODE SELECTED</h5>
+            <h4>{node.title.name}</h4>
+            <span className="glyphicon glyphicon-remove-sign closeSign" onClick={() => this.close()} aria-hidden="true"></span>
           </div>
           <div className="setContain">
             <form className="form-horizontal">
