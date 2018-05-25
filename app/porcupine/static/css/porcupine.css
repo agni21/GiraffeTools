@@ -439,8 +439,7 @@ body {
   position: relative;
 }
 
-.node__port--input:before {
-  content: "";
+.node__port--input {
   position: absolute;
   width: 8px;
   height: 8px;
@@ -450,8 +449,7 @@ body {
   border-radius: 50%;
 }
 
-.node__port--output:after {
-  content: "";
+.node__port--output {
   position: absolute;
   width: 8px;
   height: 8px;
