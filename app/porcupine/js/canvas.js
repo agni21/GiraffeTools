@@ -3,7 +3,7 @@ import React from 'react';
 import { DropTarget } from 'react-dnd'
 import ItemTypes from './itemTypes'
 import Node from './node'
-import jsPlumbReady from './jsPlumbReady';
+// import jsPlumbReady from './jsPlumbReady';
 import zoomFunctions from './zoomFunctions';
 import nodes from '../static/assets/nipype.json';
 // import { getNodesByCategory } from './utilityFunctions'
@@ -28,23 +28,24 @@ class Canvas extends React.Component {
     this.hoverNodeEvent       = this.hoverNodeEvent.bind(this);
     this.leaveNodeEvent       = this.leaveNodeEvent.bind(this);
     this.clickOrDraggedNode   = false;
+    this.updateNodePosition   = this.updateNodePosition.bind(this);
   }
 
   componentDidMount() {
     this.placeholder = false;
-    instance = jsPlumbReady();
+    // instance = jsPlumbReady();
     this.mouseState = zoomFunctions();
   }
 
   componentDidUpdate() {
     this.placeholder = false;
-    let a = jsPlumb.getSelector('.node');
-    instance.draggable(a,
-      {
-        drag: this.updateNodePosition.bind(this),
-        grid: [8, 8]
-      }
-    );
+    // let a = jsPlumb.getSelector('.node');
+    // instance.draggable(a,
+    //   {
+    //     drag: this.updateNodePosition.bind(this),
+    //     grid: [8, 8]
+    //   }
+    // );
   }
 
   allowDrop(event) {
@@ -52,7 +53,7 @@ class Canvas extends React.Component {
   }
 
   clickNodeEvent(event, nodeId) {
-    if (this.clickOrDraggedNode === false) {
+    if (this.clickOrDraggedNode === false && event.target.classList[0]!=="node__port--input") {
       this.props.changeSelectedNode(nodeId);
     } else if (this.clickOrDraggedNode === true) {
       this.clickOrDraggedNode = false;
@@ -70,14 +71,13 @@ class Canvas extends React.Component {
     event.stopPropagation();
   }
 
-  updateNodePosition(event) {
+  updateNodePosition(nodeId, offset) {
     if (!this.clickOrDraggedNode) {
       this.clickOrDraggedNode = true;
     }
-    const nodeId = event.el.id;
-    const node = this.props.net[node];
-    node.state.left = `${event.pos['0']}px`;
-    node.state.top = `${event.pos['1']}px`;
+    const node = this.props.net[nodeId];
+    node.state.x += offset.x;
+    node.state.y += offset.y;
     this.props.modifyNode(node, nodeId);
   }
 
@@ -85,15 +85,15 @@ class Canvas extends React.Component {
     this.placeholder = false;
 		const rec = document.getElementById('zoomContainer').getBoundingClientRect();
     const canvas = document.getElementById('jsplumbContainer');
-    const zoom = instance.getZoom();
+    // const zoom = instance.getZoom();
+    const zoom = 1;
     let category = item.element_type;
     let name = category.splice(-1)[0];
     let currentNodes = nodes;
     category.forEach(function (c) {
       currentNodes = currentNodes['categories'][c];
     })
-    const node = {};
-    Object.assign(node, currentNodes.nodes[name]);
+    const node = $.extend(true, {}, currentNodes.nodes[name]);
 
     node.colour = currentNodes.colour;
     node.info = { category, name };
@@ -165,6 +165,7 @@ class Canvas extends React.Component {
           click  = {this.clickNodeEvent}
           hover  = {this.hoverNodeEvent}
           leave  = {this.leaveNodeEvent}
+          draged = {this.updateNodePosition}
         />
       );
     })
@@ -219,7 +220,7 @@ Canvas.propTypes = {
   canDrop: 		PropTypes.bool.isRequired,
 };
 
-export default DropTarget(ItemTypes.BOX, boxTarget, (connect, monitor) => ({
+export default DropTarget(ItemTypes.PaneElement, boxTarget, (connect, monitor) => ({
 	connectDropTarget: connect.dropTarget(),
 	isOver: monitor.isOver(),
 	canDrop: monitor.canDrop(),
