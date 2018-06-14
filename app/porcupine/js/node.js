@@ -7,17 +7,53 @@ class Node extends React.Component {
   }
 
   render() {
+    const { x, y, colour, class: classname, id, type, click, ports, hover, leave } = this.props;
+    const visiblePorts = ports.filter(port => port.visible);
     return (
       <div
-        className={`node ${this.props.class}`}
+        className={`node ${classname}`}
         style={{
-          left:`${this.props.x}px`,
-          top: `${this.props.y}px`,
-          background: this.props.colour
+          left:`${x}px`,
+          top: `${y}px`,
+          background: colour
         }}
-        onClick={(event) => this.props.click(event, this.props.id)}
+        onClick={(event) => click(event, id)}
+        onTouchEnd={(event) => click(event, id)}
+        onMouseEnter={(event) => hover(event, id)}
+        onMouseLeave={(event) => leave(event)}
+        data-tip='tooltip'
+        data-for='getContent'
       >
-        {this.props.type}
+        <div className="node__type">
+          {type}
+        </div>
+
+        <div className="node__ports">
+          {
+            visiblePorts.length > 0 && (
+              <ul>
+                {
+                  visiblePorts.map((port, index) => {
+                    let portClassName = '';
+                    if (port.input) {
+                      portClassName = 'node__port--input';
+                    } else if (port.output) {
+                      portClassName = 'node__port--output';
+                    }
+
+                    return (
+                      <li key={index}>
+                        <div className={`node__port ${portClassName}`}>
+                          {port.name}
+                        </div>
+                      </li>
+                    )
+                  })
+                }
+              </ul>
+            )
+          }
+        </div>
       </div>
     )
   }
@@ -29,7 +65,10 @@ Node.propTypes = {
   x:      PropTypes.number.isRequired,
   y:      PropTypes.number.isRequired,
   click:  PropTypes.func.isRequired,
+  hover:  PropTypes.func.isRequired,
+  leave:  PropTypes.func.isRequired,
   class:  PropTypes.string,
+  ports:  PropTypes.array.isRequired
 }
 
 export default Node;
